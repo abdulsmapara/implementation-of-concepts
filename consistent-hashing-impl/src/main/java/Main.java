@@ -15,17 +15,18 @@ public class Main {
     private static final int MAX_NUM_KEYS = 26;
 
     public static void main(String[] args) {
+        // 1. Create keys of the data to be requested
         Set<String> keys = new HashSet<>();
         for (int i = 0; i < MAX_NUM_KEYS; i++) {
             keys.add(String.valueOf(i));
         }
 
-        // add one server initially to serve all requests
+        // 2. add one server initially to serve all requests
         serverManagerService.addServer(new Server(getRandomID(), keys));
 
         System.out.println("Servers: " + serverManagerService.getServers());
 
-
+        // 3. Create requests and ask them to be handled by requestHandlerService
         Request[] requests = new Request[NUM_REQUESTS];
         List<String> keysList = new ArrayList<>(keys);
         for (int i = 0; i < NUM_REQUESTS; i++) {
@@ -33,19 +34,22 @@ public class Main {
             requestHandlerService.handleRequest(requests[i]);
         }
 
-        // Add few servers
+        // 4. Add new servers
         for (int i = 0; i < NUM_SERVERS_TO_ADD; i++) {
             serverManagerService.addServer(new Server(getRandomID()));
         }
 
+        // 5. Ask requestHandlerService to handle the requests with updated set of servers
         for (int i = 0; i < NUM_REQUESTS; i++) {
             requestHandlerService.handleRequest(requests[i]);
         }
 
+        // 6. Remove certain numbers of servers
         for (int i = 0; i < NUM_SERVERS_TO_REMOVE; i++) {
             serverManagerService.removeServer(serverManagerService.getServers().get(0));
         }
 
+        // 7. Ask requestHandlerService to handle the requests with updated set of servers
         for (int i = 0; i < NUM_REQUESTS; i++) {
             requestHandlerService.handleRequest(requests[i]);
         }

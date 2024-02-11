@@ -20,6 +20,7 @@ public class RequestHandlerServiceImpl implements RequestHandlerService, OnServe
 
     @Override
     public void handleRequest(Request request) {
+        System.out.println("Handling request with id: " + request.getId() + " with " + serversOnRing.values());
         Server server = getServerForRequest(request);
         if (!server.getKeys().contains(request.getId())) {
             throw new RuntimeException("Server " + server + " cannot handle request with id: " + request.getId());
@@ -49,7 +50,6 @@ public class RequestHandlerServiceImpl implements RequestHandlerService, OnServe
 
     private int getHashValueOnRing(String id) {
         int hashValue = ((id.hashCode()) % CONSISTENT_HASH_RING_SIZE + CONSISTENT_HASH_RING_SIZE) % CONSISTENT_HASH_RING_SIZE;
-        System.out.println("HashValue of " + id + " is " + hashValue);
         return hashValue;
     }
 
@@ -66,9 +66,6 @@ public class RequestHandlerServiceImpl implements RequestHandlerService, OnServe
         }
         Server nextServer = this.getNextServer(indexOfNewServerOnRing);
         Server prevServer = this.getPrevServer(indexOfNewServerOnRing);
-        System.out.println("----");
-        System.out.println(nextServer);
-        System.out.println(prevServer);
         if (nextServer != null && prevServer != null) {
             int indexOfPrevServer = this.getHashValueOnRing(prevServer.getId());
             Set<Integer> indexesBetweenPrevAndNewServer = new HashSet<>();
@@ -89,8 +86,7 @@ public class RequestHandlerServiceImpl implements RequestHandlerService, OnServe
         }
         serversOnRing.put(indexOfNewServerOnRing, server);
 
-        System.out.println("Rebalancing complete for server " + server);
-        System.out.println("Servers: " + serverManagerService.getServers() + "\n" + serversOnRing);
+        System.out.println("Rebalancing complete for server with id: " + server.getId());
     }
 
     private Server getNextServer(Integer indexOnRing) {
@@ -136,7 +132,6 @@ public class RequestHandlerServiceImpl implements RequestHandlerService, OnServe
         if (serversOnRing.get(indexOfThisServerOnRing).getId().equals(server.getId())) {
             serversOnRing.remove(indexOfThisServerOnRing);
         }
-        System.out.println("Rebalancing complete for server " + server);
-        System.out.println("Servers: " + serverManagerService.getServers() + "\n" + serversOnRing);
+        System.out.println("Rebalancing complete for server with id: " + server.getId());
     }
 }
