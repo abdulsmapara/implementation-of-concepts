@@ -1,0 +1,1 @@
+https://shopify.engineering/17489012-what-does-your-webserver-do-when-a-user-hits-refresh
